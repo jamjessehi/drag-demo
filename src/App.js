@@ -5,6 +5,7 @@ import "./App.css";
 const DragContent = () => {
   const dragRef = useRef({});
 
+  const boxWrapRef = useRef(null);
   const boxRef = useRef(null);
 
   useEffect(() => {
@@ -13,7 +14,12 @@ const DragContent = () => {
       boxRef.current.style.top = `${top}px`;
     }
 
-    dragRef.current = new Drag(translate);
+    dragRef.current = new Drag(translate, {
+      limit: {
+        x: [0, boxWrapRef.current.offsetWidth - boxRef.current.offsetWidth],
+        y: [0, boxWrapRef.current.offsetHeight - boxRef.current.offsetHeight]
+      }
+    });
 
     const drag = dragRef.current;
 
@@ -86,12 +92,14 @@ const DragContent = () => {
 
   return (
     <div className="container">
-      <div
-        ref={boxRef}
-        className="box"
-        onMouseDown={mouseHold}
-        onTouchStart={touchHold}
-      />
+      <div className="box-wrap" ref={boxWrapRef}>
+        <div
+          ref={boxRef}
+          className="box"
+          onMouseDown={mouseHold}
+          onTouchStart={touchHold}
+        />
+      </div>
     </div>
   );
 };

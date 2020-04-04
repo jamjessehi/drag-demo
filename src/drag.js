@@ -1,6 +1,12 @@
 export default class Drag {
   constructor(
     translate,
+    options = {
+      limit: {
+        x: [0, 0],
+        y: [0, 0]
+      }
+    },
     draggable = {
       hold: false,
       start: [0, 0],
@@ -9,6 +15,7 @@ export default class Drag {
     }
   ) {
     this.translate = translate;
+    this.options = options;
     this.draggable = draggable;
   }
 
@@ -27,13 +34,29 @@ export default class Drag {
     }
   }
 
+  limit([x, y]) {
+    const { limit: { x: lx, y: ly } = {} } = this.options || {};
+
+    let mx = x > lx[0] ? x : 0;
+    mx = mx < lx[1] ? mx : lx[1];
+
+    let my = y > ly[0] ? y : 0;
+    my = my < ly[1] ? my : ly[1];
+
+    return [mx, my];
+  }
+
   makeMove([x, y]) {
     if (this.draggable.hold) {
       console.log("moving...🏃‍♀️");
       const { start, previous } = this.draggable;
       const [sx, sy] = start;
       const distance = [x - sx, y - sy];
-      const move = [distance[0] + previous[0], distance[1] + previous[1]];
+      let mx = distance[0] + previous[0];
+      let my = distance[1] + previous[1];
+
+      const move = this.limit([mx, my]);
+
       this.draggable.move = move;
 
       this.translate(move);

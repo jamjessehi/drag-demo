@@ -1,6 +1,14 @@
 .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.box-wrap {
   position: relative;
-  height: 90vh;
+  width: 70%;
+  height: 70%;
   border: 1px solid pink;
 }
 
