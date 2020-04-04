@@ -37,7 +37,6 @@ const DragContent = () => {
     };
 
     const touchMove = function(e) {
-      e.preventDefault();
       const { clientX, clientY } = e.touches[0];
       drag.makeMove([clientX, clientY]);
     };
@@ -75,16 +74,15 @@ const DragContent = () => {
 
     manageEvents();
 
-    window.addEventListener(
-      "resize",
-      function() {
-        dragRef.current.freshLimit(getLimit());
-      },
-      false
-    );
+    function resize() {
+      dragRef.current.freshLimit(getLimit());
+    }
+    window.addEventListener("resize", resize, false);
 
     return () => {
       manageEvents("removeEventListener");
+
+      window.removeEventListener("resize", resize, false);
     };
   }, []);
 
