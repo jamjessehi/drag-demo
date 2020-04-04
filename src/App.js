@@ -17,32 +17,81 @@ const DragContent = () => {
 
     const drag = dragRef.current;
 
-    const makeMove = function(e) {
-      drag.makeMove(e);
-    };
-    const makeDrop = function(e) {
-      drag.makeDrop(e);
+    const makeDrop = function() {
+      drag.makeDrop();
     };
 
-    document.body.addEventListener("mousemove", makeMove, false);
-    document.body.addEventListener("mouseup", makeDrop, false);
-    document.body.addEventListener("mouseleave", makeDrop, false);
+    const mouseMove = function(e) {
+      const { clientX, clientY } = e;
+      drag.makeMove([clientX, clientY]);
+    };
+
+    const touchMove = function(e) {
+      const { clientX, clientY } = e.touches[0];
+      drag.makeMove([clientX, clientY]);
+    };
+
+    const events = [
+      {
+        ele: document.body,
+        name: "mousemove",
+        fn: mouseMove
+      },
+      {
+        ele: document.body,
+        name: ["mouseup", "mouseleave", "touchend", "touchleave"],
+        fn: makeDrop
+      },
+
+      {
+        ele: document.body,
+        name: "touchmove",
+        fn: touchMove
+      }
+    ];
+
+    function manageEvents(method = "addEventListener") {
+      events.forEach(({ ele, name, fn }) => {
+        if (Array.isArray(name)) {
+          name.forEach(item => {
+            ele[method](item, fn, false);
+          });
+        } else {
+          ele[method](name, fn, false);
+        }
+      });
+    }
+
+    manageEvents();
 
     return () => {
-      document.body.removeEventListener("mousemove", makeMove, false);
-      document.body.removeEventListener("mouseup", makeDrop, false);
-      document.body.removeEventListener("mouseleave", makeDrop, false);
+      manageEvents("removeEventListener");
     };
   }, []);
 
-  function makeHold(e) {
+  function makeHold([x, y]) {
     const drag = dragRef.current;
-    drag.makeHold(e);
+    drag.makeHold([x, y]);
+  }
+
+  function touchHold(e) {
+    const { clientX, clientY } = e.touches[0];
+    makeHold([clientX, clientY]);
+  }
+
+  function mouseHold(e) {
+    const { clientX, clientY } = e;
+    makeHold([clientX, clientY]);
   }
 
   return (
     <div className="container">
-      <div ref={boxRef} className="box" onMouseDown={makeHold} />
+      <div
+        ref={boxRef}
+        className="box"
+        onMouseDown={mouseHold}
+        onTouchStart={touchHold}
+      />
     </div>
   );
 };

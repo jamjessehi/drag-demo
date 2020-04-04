@@ -12,11 +12,10 @@ export default class Drag {
     this.draggable = draggable;
   }
 
-  makeHold(e) {
+  makeHold([x, y]) {
     console.log("hold it 🤏");
     this.draggable.hold = true;
-    const { clientX, clientY } = e;
-    this.draggable.start = [clientX, clientY];
+    this.draggable.start = [x, y];
   }
 
   makeDrop() {
@@ -28,13 +27,12 @@ export default class Drag {
     }
   }
 
-  makeMove(e) {
+  makeMove([x, y]) {
     if (this.draggable.hold) {
       console.log("moving...🏃‍♀️");
-      const { clientX, clientY } = e;
       const { start, previous } = this.draggable;
-      const [x, y] = start;
-      const distance = [clientX - x, clientY - y];
+      const [sx, sy] = start;
+      const distance = [x - sx, y - sy];
       const move = [distance[0] + previous[0], distance[1] + previous[1]];
       this.draggable.move = move;
 
