@@ -8,6 +8,13 @@ const DragContent = () => {
   const boxWrapRef = useRef(null);
   const boxRef = useRef(null);
 
+  function getLimit() {
+    return {
+      x: [0, boxWrapRef.current.offsetWidth - boxRef.current.offsetWidth],
+      y: [0, boxWrapRef.current.offsetHeight - boxRef.current.offsetHeight]
+    };
+  }
+
   useEffect(() => {
     function translate([left, top]) {
       boxRef.current.style.left = `${left}px`;
@@ -15,10 +22,7 @@ const DragContent = () => {
     }
 
     dragRef.current = new Drag(translate, {
-      limit: {
-        x: [0, boxWrapRef.current.offsetWidth - boxRef.current.offsetWidth],
-        y: [0, boxWrapRef.current.offsetHeight - boxRef.current.offsetHeight]
-      }
+      limit: getLimit()
     });
 
     const drag = dragRef.current;
@@ -33,6 +37,7 @@ const DragContent = () => {
     };
 
     const touchMove = function(e) {
+      e.preventDefault();
       const { clientX, clientY } = e.touches[0];
       drag.makeMove([clientX, clientY]);
     };
@@ -69,6 +74,14 @@ const DragContent = () => {
     }
 
     manageEvents();
+
+    window.addEventListener(
+      "resize",
+      function() {
+        dragRef.current.freshLimit(getLimit());
+      },
+      false
+    );
 
     return () => {
       manageEvents("removeEventListener");

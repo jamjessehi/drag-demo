@@ -19,6 +19,31 @@ export default class Drag {
     this.draggable = draggable;
   }
 
+  freshLimit(limit) {
+    this.options.limit = limit;
+    this.freshPos();
+  }
+
+  freshPos() {
+    const {
+      limit: { x: lx, y: ly }
+    } = this.options;
+
+    const {
+      move: [mx, my]
+    } = this.draggable;
+
+    let x = mx;
+    x = x > lx[0] ? x : lx[0];
+    x = x < lx[1] ? x : lx[1];
+
+    let y = my;
+    y = y > ly[0] ? y : ly[0];
+    y = y < ly[1] ? y : ly[1];
+
+    this.translate([x, y]);
+  }
+
   makeHold([x, y]) {
     console.log("hold it 🤏");
     this.draggable.hold = true;
