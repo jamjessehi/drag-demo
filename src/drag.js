@@ -1,12 +1,7 @@
 export default class Drag {
   constructor(
     translate,
-    options = {
-      limit: {
-        x: [0, 0],
-        y: [0, 0]
-      }
-    },
+    options = {},
     draggable = {
       hold: false,
       start: [0, 0],
@@ -14,20 +9,34 @@ export default class Drag {
       move: [0, 0]
     }
   ) {
+    if (typeof translate !== "function") {
+      throw new Error(`first arguments is not a function`);
+    }
+
     this.translate = translate;
     this.options = options;
     this.draggable = draggable;
   }
 
   freshLimit(limit) {
+    const { limit: initailLimit } = this.options || {};
+
+    if (!initailLimit) {
+      throw new Error(`limit doesn't initail in constructor`);
+    }
+
     this.options.limit = limit;
     this.freshPos();
   }
 
   freshPos() {
-    const {
-      limit: { x: lx, y: ly }
-    } = this.options;
+    const { limit } = this.options || {};
+
+    if (!limit) {
+      return;
+    }
+
+    const { x: lx, y: ly } = limit;
 
     const {
       move: [mx, my]
@@ -60,6 +69,12 @@ export default class Drag {
   }
 
   limit([x, y]) {
+    const { limit } = this.options || {};
+
+    if (!limit) {
+      return [x, y];
+    }
+
     const { limit: { x: lx, y: ly } = {} } = this.options || {};
 
     let mx = x > lx[0] ? x : 0;

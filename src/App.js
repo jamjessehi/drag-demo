@@ -21,9 +21,7 @@ const DragContent = () => {
       boxRef.current.style.top = `${top}px`;
     }
 
-    dragRef.current = new Drag(translate, {
-      limit: getLimit()
-    });
+    dragRef.current = new Drag(translate, { limit: getLimit() });
 
     const drag = dragRef.current;
 
