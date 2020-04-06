@@ -39,6 +39,10 @@ const DragContent = () => {
       drag.makeMove([clientX, clientY]);
     };
 
+    const banScroll = function(e) {
+      e.preventDefault();
+    };
+
     const events = [
       {
         ele: document.body,
@@ -55,17 +59,28 @@ const DragContent = () => {
         ele: document.body,
         name: "touchmove",
         fn: touchMove
+      },
+
+      {
+        ele: boxRef.current,
+        name: "touchmove",
+        fn: banScroll,
+        options: {
+          passive: false
+        }
       }
     ];
 
     function manageEvents(method = "addEventListener") {
-      events.forEach(({ ele, name, fn }) => {
+      events.forEach(({ ele, name, fn, options = false }) => {
+        if (!ele) return;
+
         if (Array.isArray(name)) {
           name.forEach(item => {
-            ele[method](item, fn, false);
+            ele[method](item, fn, options);
           });
         } else {
-          ele[method](name, fn, false);
+          ele[method](name, fn, options);
         }
       });
     }
